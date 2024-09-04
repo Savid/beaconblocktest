@@ -7,6 +7,9 @@ Check the size of beacon blocks. The sizes are calculated from the `data.message
 
 ## Usage
 
+`go run main.go <slot_number>`
+
+Example:
 ```
 # default localhost:5052
 go run main.go 9882669
