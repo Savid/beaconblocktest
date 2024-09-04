@@ -5,6 +5,7 @@ go 1.23.0
 require (
 	github.com/attestantio/go-eth2-client v0.21.9
 	github.com/ethpandaops/beacon v0.39.0
+	github.com/ferranbt/fastssz v0.1.3
 	github.com/golang/snappy v0.0.4
 	github.com/sirupsen/logrus v1.9.0
 )
@@ -15,7 +16,6 @@ require (
 	github.com/chuckpreslar/emission v0.0.0-20170206194824-a7ddd980baf9 // indirect
 	github.com/ethpandaops/ethwallclock v0.2.0 // indirect
 	github.com/fatih/color v1.16.0 // indirect
-	github.com/ferranbt/fastssz v0.1.3 // indirect
 	github.com/go-co-op/gocron v1.16.2 // indirect
 	github.com/go-logr/logr v1.2.4 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect

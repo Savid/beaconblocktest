@@ -10,6 +10,7 @@ import (
 
 	"github.com/attestantio/go-eth2-client/spec"
 	"github.com/ethpandaops/beacon/pkg/beacon"
+	ssz "github.com/ferranbt/fastssz"
 	"github.com/golang/snappy"
 	"github.com/sirupsen/logrus"
 )
@@ -73,7 +74,7 @@ func raw(logger *logrus.Logger, addr, port, slot string) {
 		return
 	}
 
-	logDataSizes(nestedLogger, messageDataAsJSON)
+	logDataSizes(nestedLogger.WithField("type", "json"), messageDataAsJSON)
 }
 
 func eth2Client(logger *logrus.Logger, addr, port, slot string) {
@@ -103,16 +104,23 @@ func eth2Client(logger *logrus.Logger, addr, port, slot string) {
 		return
 	}
 
+	sszData, err := ssz.MarshalSSZ(blockMessage)
+	if err != nil {
+		nestedLogger.Errorf("Failed to marshal block data: %v", err)
+		return
+	}
+	logDataSizes(nestedLogger.WithField("type", "ssz"), sszData)
+
 	dataAsJSON, err := json.Marshal(blockMessage)
 	if err != nil {
 		nestedLogger.Errorf("Failed to marshal block data: %v", err)
 		return
 	}
 
-	logDataSizes(nestedLogger, dataAsJSON)
+	logDataSizes(nestedLogger.WithField("type", "json"), dataAsJSON)
 }
 
-func getBlockMessage(block *spec.VersionedSignedBeaconBlock) (interface{}, error) {
+func getBlockMessage(block *spec.VersionedSignedBeaconBlock) (ssz.Marshaler, error) {
 	switch block.Version {
 	case spec.DataVersionAltair:
 		return block.Altair.Message, nil
@@ -131,6 +139,6 @@ func logDataSizes(logger *logrus.Entry, data []byte) {
 	dataSize := len(data)
 	compressedData := snappy.Encode(nil, data)
 	compressedDataSize := len(compressedData)
-	logger.Infof("Byte length of JSON block data: %d", dataSize)
-	logger.Infof("Compressed byte length of JSON block data: %d", compressedDataSize)
+	logger.Infof("Byte length: %d", dataSize)
+	logger.Infof("Byte length (compressed): %d", compressedDataSize)
 }
